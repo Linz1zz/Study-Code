@@ -131,3 +131,10 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
   // 用delete来释放
 ```
 
+30.getline()用法:
+```cpp
+  string str;
+  getline(cin, str);//这个函数在string库中
+  //在文件的输入时末尾的换行符，应该用inFile.get()来处理
+```
+

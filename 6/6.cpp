@@ -3,6 +3,7 @@
 # include <string>
 # include <array>
 # include <iomanip>
+# include <fstream>
 
 using namespace std;
 
@@ -109,11 +110,11 @@ void tax_6_5()
 }
 
 struct pat_info {
-    char name[50];
+    string name;
     double money;
 };
 
-void donate()
+void donate_6_6()
 {
     int num, tmp = 0;
     cout << "Please input the number of people: " << endl;
@@ -150,6 +151,87 @@ void donate()
 }
 
 
+void word_6_7()
+
+{
+    int vowels = 0;
+    int consonants = 0;
+    int others = 0;
+
+    cout << "Enter words (q to quit): " ;
+    string word;
+    //cin >> word;
+    while (cin >> word)
+    {
+        if (word == "q")
+            break;
+        if (isalpha(word[0]))
+        {
+            if (word[0] == 'a' || word[0] == 'e' || word[0] == 'i' || word[0] == 'o' || word[0] == 'A' || word[0] == 'E' || word[0] == 'I' || word[0] == 'O')
+                vowels++;
+            else
+                consonants++;
+
+        }
+        else
+            others++;
+
+
+    }
+
+    cout << vowels << " words beginning with vowels" << endl;
+    cout << consonants << " words beginning with consonants" << endl;
+    cout << others << " others"<<endl;
+}
+
+
+void openfile_6_8()
+{
+
+   ifstream inFile;
+   inFile.open("6_8.txt");
+
+   int num = 0;
+   char ch;
+
+   while (ch = inFile.get() != EOF)
+   {
+       num++;
+       //cout << ch;
+   }
+   cout << num;
+}
+
+
+void readfile_6_9()
+{
+
+
+    ifstream inFile;
+    inFile.open("6_9.txt");
+    //char line[80];
+    int count;
+
+    //inFile.getline(line, 80);
+
+    inFile >> count;
+    struct pat_info * info = new pat_info [count];
+    cout << count;
+    inFile.get();
+
+    for(size_t i = 0; i < count; i++)
+    {
+        getline(inFile, info[i].name);
+        inFile >> info[i].money;
+        inFile.get();    
+    }
+
+    for(size_t i = 0; i < count; i++)
+    {
+        cout << info[i].name << setw(20) << info[i].money << endl;
+    }
+
+}
 
 
 int main()
@@ -162,6 +244,11 @@ int main()
     //menu_6_3();
 
     //tax_6_5();
-    donate();
+    
+    //donate_6_6();
+
+    //word_6_7();
+
+    readfile_6_9();
     return 0;
 }
