@@ -138,3 +138,34 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
   //在文件的输入时末尾的换行符，应该用inFile.get()来处理
 ```
 
+40.对于const和指针的使用：
+```cpp
+  int age = 39;
+  const int * pt = &age;
+  //该声明表示pt指向一个const int，因此不能用pt来修改这个值
+  *pt += 20； // invalid
+  cin >> *pt;  // invalid
+  *pt = 20;  // invalid
+  age = 20;  // valid 但是可以通过age来修改
+  pt = &sage; //但是pt可以指向其他变量，但是仍然无法通过他改变值
+
+  const float g_earth = 9.80;
+  const float * pe = &g_earth; //valid pe和g_earth均不能改变值 允许将const的值的地址给const指针
+
+  const float g_earth = 9.80;
+  float * pe = &g_earth; // invalid 不允许将const的值给一个非const的指针， 数组传参时要注意const
+
+  int * const finger = &sloth; // A const point to int, 指针指向的地址不能改，但可以通过指针来更改值
+  const int * finger = &sloth; // A point to const int
+```
+
+41.二维数组作为函数的参数时：
+```cpp
+  int data[3][4] = {{1,2,3,4}, {5,6,7,8}, {9,10,11,12}};
+
+  int * data [4]; //声明的是由4个整形指针构成的数组；
+
+  int sum(int (*data)[4], int size); // 这里data的括号是必须的
+  int sum(int data[][4], int size); // 这种也是可以的，都是直接告诉了行数
+```
+
