@@ -119,7 +119,9 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
   inFile.good()
   inFile.fail()
   inFile.eof()
-
+  
+  //文件读取到末尾
+  ch = cin.get() != EOF;
 ```
 
 29.在cpp中用new来分配动态内存是比malloc()更好的方式，只能用指针来访问所分配的内存块，delete用于释放new的内存，使用delete的关键在于，他的对象是new的内存，而不一定要求是用于new的指针。
@@ -135,7 +137,7 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
 ```cpp
   string str;
   getline(cin, str);//这个函数在string库中
-  //在文件的输入时末尾的换行符，应该用inFile.get()来处理
+  inFile.get()//在文件的输入时末尾的换行符，应该用inFile.get()来处理
 ```
 
 40.对于const和指针的使用：
@@ -169,3 +171,65 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
   int sum(int data[][4], int size); // 这种也是可以的，都是直接告诉了行数
 ```
 
+42.有很多在输入时判断是否成功的方法：
+```cpp
+  int a;
+  while (cin >> a); // 如果cin的输入不满足int，则会返回false
+
+  cin >> temp;
+  if (!cin) // bad input
+  {
+  	cin.clear(); // 清除cin的异常状态，使得cin可以使用
+  	while （cin.get() != '\n'）
+  		continue;  // 清除缓冲区
+  }
+```
+
+43.vector、array初步：
+```cpp
+  # include <vector>
+  # include <array>
+  using namespace std;
+
+  vector<int> vi; // 创建一个空的向量，长度可以后续调整，动态分配内存，类似于自动化的new、delete
+  vector<double> vt(n) // 创建一个n长的向量
+
+  array<int, 5> ai; // array和数组更接近长度固定，静态内存分配
+  array<int, 5> ab;
+  ai = ab; //可以直接赋值，而数组需要一个一个赋值
+
+  // array的函数传递,这里不包括引用
+  void show(array<int, 5>ai) // 创建一个新对象，这样的效率太低
+  {
+  	ai[0] = ...;
+  }
+  show(ai);
+  
+  void fill(array<int, 5> * ai) // 表达的方法太复杂
+  {
+  	(*ai) [0] = ...;
+  }
+  fill(&ai);
+  // 更好的方法是引用，在第八章
+```
+44.函数指针：
+```cpp
+  think(); // 有一个函数think；
+  process(think); // think表示函数的地址，如果写的是think()则表示的是think这个函数的返回值，这里是传参
+
+  // 下面看看如何声明
+  double pam(int); // pam函数返回一个double，需要传入一个int变量，函数原型
+  double (*pf) (int);// 这是正确的指针类型声明 将pam换成(*pf)
+  pf = pam; // 必须返回类型和特征标均一致
+  
+  double y = (*pf)(5)
+  double y = pf(5) //可以用这两种方法调用函数
+
+  // C++的函数原型是可以不用包含变量名字的：
+  void cheers(int); //这里可以不写n
+  void cheers(int n)
+  {
+  	...
+  }
+
+```
