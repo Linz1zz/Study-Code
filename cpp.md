@@ -233,3 +233,8 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
   }
 
 ```
+45.关于cin、cin.getline、getline：
+```cpp
+https://blog.csdn.net/a3192048/article/details/80303547
+https://blog.csdn.net/k346k346/article/details/48213811
+```
