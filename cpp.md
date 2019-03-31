@@ -260,8 +260,50 @@ class <派生类名>:<继承方式1><基类名1>,<继承方式2><基类名2>,…
   }
 
 ```
+
 45.关于cin、cin.getline、getline：
 ```cpp
+// 特别是缓冲区的概念
 https://blog.csdn.net/a3192048/article/details/80303547
 https://blog.csdn.net/k346k346/article/details/48213811
+```
+
+46.引用变量：
+```cpp
+  int rat;
+  int & rodent = rat; // 引用变量必须在声明时进行初始化，之后这个就相当于rat的一个别名，&rodent就表示rat的地址。 可以看做是一个指向固定地址的指针
+  int * const pr = &rat;
+
+  int & rodent;
+  rodent = rat;  // wrong！！！！！
+
+  // 引用变量传参：
+  int main()
+  {
+  	int wallet1 = 10, wallet2 = 20;
+  	swap(wallet1, wallet2);   // 这里使用引用传参，函数的功能是两个值交换，注意形式上和传值传参是一模一样
+    // 返回后 wallet1 = 20， wallet2 = 10
+    ...
+  }
+
+  void swap(int & a, int & b)
+  {
+  	int tmp;
+  	tmp = a;
+  	a = b;
+  	b = tmp;
+  }
+
+  // 引用对象，不能是表达式
+  // 尽可能地使用const
+  // 左值引用和右值引用
+
+  // 返回引用，最重要的一点是，应避免返回函数终止时不再存在的内存单元引用：
+  fee & Function(fee & p) // 错误的引用例子
+  {
+  	fee  q;
+  	q = p;
+  	return q;    // 这个函数返回了一个p的引用，但是函数终止时，q就被释放了 
+  	             // 注意这里并没有&，最简单的方法是返回一个作为参数传递给函数的引用，比如这里的q
+  }
 ```
