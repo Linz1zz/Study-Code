@@ -327,3 +327,53 @@ https://blog.csdn.net/k346k346/article/details/48213811
   // 如果需要对某种参数类型做特别的实例化，声明如下：
   template <> void Function(int &a);
 ```
+
+49.关于#include中<>和""的区别：
+```cpp
+  #include<iostream>  // 用<>, 将首先在存储标准头文件的文件系统中查找
+  #include"your.h"    // 用"", 将首先在当前工作目录或者源代码目录查找，因此使用自己定义的头文件应该使用" "
+
+  // 头文件所包含的内容：1.函数原型 2.结构体、类的定义 3.const变量 4.内联函数定义
+```
+
+50.未引入名称空间，变量的链接性：内部、外部、无链接性：
+```cpp
+  int global;   // 链接性为外部，其余文件也可以使用
+  static int one_file；  // 链接性为内部，只有该文件的代码能使用
+  int main()
+  {
+  	...
+  }
+  // 注意上下两个static的含义不同，上一个表示内部链接性，下一个表示存储连续性
+  void function(int n)
+  {
+  	static int cont; // 无链接性，只有函数内可以使用
+  }
+
+  // 外部变量的使用方式，C++中变量只能有一次定义，C++提供了定义和声明两种方式
+  double up;              // 定义，初始化为0
+  extern int blem;        // 声明，注意不能赋值，赋值即视作定义
+  extern char gr = 'z';   // 定义
+
+  // 多文件使用方式：
+  // file01.cpp
+  extern int cat = 20;   // 定义
+  int dogs = 22;         // 定义
+  int fleas;             // 定义
+  // file02.cpp
+  extern int cat;        // 声明
+  extern fleas;          // 声明 如果没有声明，那么在file02中就无法访问fleas
+  // extern dogs;           // 声明
+  int dogs = 5;          // ERROR!!!! 即使想用相同的名称来命名变量，这样也是错的，因为违反了单定义规则
+  static int dogs = 5;   // 这是可以的，用链接性为内部的变量覆盖
+
+  // C++中const全局变量的链接性为内部的
+  const int finger = 10;
+
+  // 动态内存由运算符new和delete控制，因此可以在一个函数中分配内存，而在另一个函数将其释放，new的初始化
+  int *pi = new int (6);
+  double *pd = new double (99.99); // C++98
+  struct where {double x, double y, double z};
+  struct where *one = new where {2.5, 7.3, 7.02};
+  int *ar = new int [4] {2, 3, 4, 5};  // C++11
+  ```
