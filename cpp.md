@@ -377,3 +377,69 @@ https://blog.csdn.net/k346k346/article/details/48213811
   struct where *one = new where {2.5, 7.3, 7.02};
   int *ar = new int [4] {2, 3, 4, 5};  // C++11
   ```
+
+51.名称空间：名称，在C++中可以使变量、函数、结构、枚举、类以及类和结构的成员
+```cpp
+  // 创建名称空间，关键词：namespace，注意不能位于代码块中
+  // 名称空间是开放的(open)
+
+  // using声明和using编译指令
+  // using声明：使得特定的标识符可用
+  // using编译：使得整个命名空间可用
+  char fetch;
+  int main()
+  {
+  	using Jill::fetch;
+  	double fetch;     // Error!! 使用声明的方式会覆盖全局变量
+  	cin >> fetch;     // input to Jill::fetch
+  	cin >> ::fetch;   // input to global fetch
+  }
+  // using编译，关键字：using namespace
+  // Jill::fetch
+  char fetch;
+  int main()
+  {
+  	using namespace Jill;
+  	double fetch;     // No Error!!! 局部辩论覆盖
+  	cin >> fetch;     // input to local fetch
+    cin >> ::fetch;   // input to global fetch
+    cin >> Jill::fetch; // input to Jill::fetch
+  }
+
+  // 命名空间声明可以嵌套
+  namespace elements{
+  	namespace fire{
+  		int flame;
+  		...
+  	}
+  	float water;
+  }
+
+  namespace myth
+  {
+  	using Jill::fetch;
+  	using namesapce elements;
+  	using std::cout;
+  	using std::cin;
+  }
+  using namesapce myth;
+  // 等价于下面两句话，using编译指令是可以传递的
+  using namesapce myth;
+  using namesapce elements;
+
+  // 创建别名
+  namesapce my_very_favorite_things {...};
+  namesapce mvft = my_very_favorite_things;
+
+  // 较为推荐的用法：
+  int x;
+  std::cin >> x;
+  std::cout << x << std::endl;
+
+  using std::cin;
+  using std::cout;
+  using std::endl;
+  int x;
+  cin >> x;
+  cout << x <<endl;
+```
