@@ -443,3 +443,114 @@ https://blog.csdn.net/k346k346/article/details/48213811
   cin >> x;
   cout << x <<endl;
 ```
+
+52.类：一般来说，类规范由两个部分组成：1.类声明：以数据成员的方式描述数据部分，以成员函数（被称为方法）的方式描述公有接口。 2.类方法定义：描述如何实现类成员函数。 简单来说，类声明提供了类的蓝图，而方法定义则提供了细节。类设计尽可能将公有接口与实现细节分开。公有接口表示设计的抽象组建。将实现细节放在一起并将它们与抽象分开被称为封装。数据隐藏是一种封装，将实现的细节隐藏在私有部分中也是一种封装，将类函数定义和类声明放在不同的文件中也是一种封装。隐藏数据是OOP主要的目标之一，因此数据项通常放在私有部分，组成类接口的成员函数放在私有部分。
+```cpp
+  class World
+  {
+  	float mass;          // 类声明中默认使用private
+  	char name[20];
+
+  public:
+  	void tellall(void);
+  	...
+
+  };
+
+  // 定义类方法
+  // 定义成员函数时，使用作用域解析符(::)来表示函数所属的类；
+  // 类方法可以访问类的private组件
+  void Stock::update(double price)
+  // Stock类的其他成员函数不用作用域解析运算符就可以使用update
+  // 定义位于类声明中的函数都将自动成为内联函数
+
+  // 类的一般格式：
+  class classname
+  {
+  private:
+  	data member declarations
+  public:
+  	member function prototype
+  };
+
+  // 类的构造函数——构造函数没有声明类型，程序声明对象时，将自动调用构造函数
+  // 下面是Stock类的构造函数原型，结合了默认值
+  Stock(const string &co, long n = 0, double pr = 0.0);
+  // 定义
+  Stock::Stock(const string &co, long n, double pr) // 注意构造函数的参数是赋给类成员的值，参数名不能与类成员相同
+  {                                                 // 常见的做法是：在数据成员名中使用m_前缀或者使用_后缀
+  	...
+  }
+  // 使用构造函数，第一种显式调用
+  Stock food = Stock("World Cabbage", 250, 1.25);
+  // 第二种隐式调用构造函数
+  Stock garment("Furry Mason", 50, 2.5);
+  // 构造函数与new混合使用
+  Stock *pstock = new Stock("Electronshock Games", 18, 19.0);
+  // 不能通过调用普通的对象函数一样的方法来调用构造函数，因为构造函数是用于对象的创建的，所以不能通过对象来调用
+
+  // 默认构造函数，只有在未定义任何构造函数的情况下，程序才会自动提供一个默认构造函数
+  Stock fluffy_the_cat;    // 正确！这就像
+  int x;
+  // 如果定义了一个像上面的构造函数
+  Stock stock1;      // Error!!!
+  // 解决方式： 1.为构造函数的所有参数提供默认值，2.通过函数重载来定义另一个构造函数——一个没有参数的构造函数
+  // 总之，在对象定义时，程序是会自动调用构造函数的
+  // 实际上，通常应初始化所有对象，以确保所有成员一开始就有已知的合理值
+  Stock::Stock()
+  {
+  	company = "no name";
+  	shares = 0;
+  	share_val = 0.0;
+  	total_var = 0.0;
+  }
+
+  // 注意区分：
+  Stock first("Concrete Conglomerate");   // 调用构造函数
+  Stock second();                         // 返回一个Stock对象的函数
+  Stock third;                            // 调用默认构造函数，隐式调用默认构造函数时不需要括号！！
+
+  // 析构函数
+  // 类对象必须有一个析构函数，和构造函数一样，如果未定义，则程序会提供一个默认的析构函数
+  // Stock类的析构函数
+  ~Stock();
+  Stock::~Stock()
+  {
+  	...
+  }
+  
+  stock1 = stock2;    // 和结构一样，类也可以直接相互之间赋值
+  // C++11也支持用{}来初始化，当然参数要符合构造函数
+  Stock hot_tip = {"Derivatives Plus Plus", 100, 45.0};
+  Stock jock {"Sport Age Storage, Inc"};
+  Stock temp {};
+
+  // 讨论一个关于show()的问题，之前我们show的函数输入都是const的，但是这里这样不行，因为输入第调用私有变量的方式
+  const Stock land {"iKun"};
+  land.show();    // Error! 因为无法保证show()不会对参数做修改
+  void show() const;  // 修改函数原型和定义
+  void stock::show() const
+  {
+  	...
+  }
+
+  // this指针，this指针指向调用对象
+  // 对象数组，初始化对象数组的方案是，首先使用默认构造函数创建数组元素，然后花括号中的构造函数将创建临时对象，然后
+  // 将临时对象的内容复制到相应的元素中。因此，要创建类对象数组，则这个类必须有默认**构造函数**
+  const int STKS = 10;
+  Stocks stocks[STKS] = {
+  	Stock("NanoSmart", 12.5, 20),
+  	Stock(),
+  	Stock("Monolithic Obelisks", 130, 3.25)
+  };
+
+  // 作用域内枚举
+  enum egg {Small, Medium, Large, Jumbo};
+  enum t_shirt {Small, Medium, Large, Xlarge}; // Error! 因为egg Small和t_shirt Small位于相同的作用域内，会冲突
+
+  enum class egg {Small, Medium, Large, Jumbo};
+  enum class t_shirt {Small, Medium, Large, Xlarge};  // 也可以使用关键字struct代替class
+  egg choice = egg::Large;        // 作用域下的枚举变量不会自动转换为整形
+
+
+```
