@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include "10_1.h"
 
 using namespace std;
@@ -32,4 +33,23 @@ Bank::Bank(string nm, string acc, float mon)
     name = nm;
     account = acc;
     money = mon;
+}
+
+Person::Person(const string &ln, const char *fn)
+{
+
+    lname = ln;
+    strncpy(fname, fn, LIMIT);
+    
+}
+
+void Person::Show () const
+{
+    cout << fname <<" " << lname << endl;
+}
+
+void Person::FormalShow() const
+{
+
+    cout << lname << ',' << fname << endl;
 }

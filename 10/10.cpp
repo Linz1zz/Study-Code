@@ -6,13 +6,9 @@ using namespace std;
 
 int main()
 {
-    Bank bb{
-        "liu xiao",
-         "123445",
-         45.2
-    };
-    Bank cc;
-    cc.show();
-    bb.show();
-    return 0;
+	string name = "Lee";
+	Person man{name, "John"};
+	man.Show();
+	man.FormalShow();
+	return 0;
 }
