@@ -554,3 +554,23 @@ https://blog.csdn.net/k346k346/article/details/48213811
 
 
 ```
+
+53.字符串和string以及const之间赋值的一些问题
+```cpp
+  // 首先如果是const char * a，想赋值给char *b
+  const char *a = "Hey";
+  char *pc = new[LENGTH];
+  pc = a;         // Error! 不可以这样直接赋值，const char* 不可以用直接赋值的方式转化为char *
+  strcpy(pc, a);  // Correct！这才是正确的
+  strncpy(pc, a, LENGTH); // 这也是正确的！
+
+  // 接着将string赋值给char *或者const char*
+  string a = "Hey";
+  char * pc;
+  char *pc = a.c_str();   // 用了string类中的这个方法
+  const char *pcc = a.cstr()
+
+  // 计算string转化为char数组后的长度
+  string a = "Hey";
+  const int len =a.length() + 1; 
+```
