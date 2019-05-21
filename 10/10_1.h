@@ -46,3 +46,62 @@ class Person
     void Show() const;
     void FormalShow() const;
 };
+
+class golf
+{
+    static const int Len = 40;
+    char fullname[Len];
+    int handicap;
+
+    public:
+    golf(char *name = "", int hc = 0);
+    golf(golf &g);
+    void handcap(int hc);
+    void showgolf() const;
+
+};
+
+typedef Item customer;
+
+class  Stack
+{
+    static const int MAX = 10;
+    Item a[MAX];
+    int top;
+
+    public:
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

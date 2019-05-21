@@ -53,3 +53,24 @@ void Person::FormalShow() const
 
     cout << lname << ',' << fname << endl;
 }
+
+golf::golf(char *name, int hc)
+{
+    strncpy(fullname, name, Len);
+    handicap = hc;
+}
+
+golf::golf(golf &g)
+{
+    golf(g.fullname, g.handicap);
+}
+
+void golf::handcap(int hc)
+{
+    handicap = hc;
+}
+
+void golf::showgolf() const
+{
+    cout << fullname << " " << handicap << endl;
+}
