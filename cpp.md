@@ -574,3 +574,108 @@ https://blog.csdn.net/k346k346/article/details/48213811
   string a = "Hey";
   const int len =a.length() + 1; 
 ```
+
+54.类再深入。讲的是运算符的重载、友元函数、状态成员、rand()随机数、类的转换
+```cpp
+
+  // 在类内定义常数的话有两种方式：
+  const static int a = 4;
+  enum {a = 4};
+
+  // 运算符重载，关键字：operator
+  operator**op**(argument-list) // 模版！这里的**表示的只是分隔，注意这里没有空格
+  operator+()        // 当然重载的运算符是需要本来就存在且有意义的，比如@就不可以重载
+  // 在定义时将operator+当做一个函数名来看待即可
+  // 这里以P384的程序为例，Time类中有下列成员函数的声明：
+  Time operator+(const Time & t) const;    // 原型
+  Time Time::operator+(const Time &t) const
+  {
+  	Time sum;
+  	sum.minutes = minutes + t.minutes;
+  	sum.hours = hours + t.hours + sum.minutes / 60;
+  	sum.minutes %= 60;
+  	return sum;
+  } 
+  
+  total = coding + fixing;
+  total = coding.operator+(fixing);
+  total = coding + fixing +thrid;  // 这也是正确的
+  // 对于二元操作符的成员函数其左侧的为其调用对象，右侧被作为参数被传递的参数
+  
+  // 但是这里遇到一个问题，比如说我重载了一个*，那么
+  total = coding * 2.5; // ok
+  total = 2.5 * coding; // false,因为coding是调用对象，这样写是错的，那怎么使得这个表达式正确呢
+
+  friend Time operator*(double m, const Time &t);  // 友元函数的原型放在类声明中，友元函数的关键字friend，使得该函数也能访问类内的私有变量，这部分是在类内
+  Time operator*(double m, const Time &t)   // 注意，虽然该函数的原型是在类内，但是其定义不用写Time::，完全看作一个类外的函数定义，但同时它可以访问类的私有变量
+  {
+  	return t * m;     // 这是很好的一种方式，使用 t.operator*(m)
+  }
+
+  // <<的重载，这个符号其实已经被重载过了，这里主要是看怎么和cout使用，在ostream类中将operator<<()函数实现为返回一个指向ostream对象的引用
+  ostream & operator<<(ostream &os, const Time &t)
+  {
+  	os << t.hours << "hours, " << t.minutes << "minutes";
+  	return os;  // 返回ostream的引用是有意义的。这个函数同样适用fout
+  }
+  cout << "Trip time: " << trip << " Tuesday\n";  // 只有返回ostream的引用才能完成这样连续的<< 
+  // 在类内定义的函数会汇编**成内联函数**
+
+  // 那么到底应该选择成员函数还是非成员函数呢：非成员函数的重载运算符函数所需的形参数目与运算符使用的操作数数目相同；而成员版本所需的参数数目少一个，因为其中的一个操作数是被隐式地传递的调用对象
+
+  // 关注P400页中定义的Vector类里枚举的用法
+  enum Mode {REC, POL}; // 后续直接用Mode表示这种枚举变量，注意的是这个类的作用域只有这个类内，所以要Vector::REC，Vector::POL
+  friend Vector operator*(double n, const Vector &a);
+  friend std::ostream & operator<<(std::ostream &os, const Vector &v);
+  // 写函数的时候还是要注意参数名不可以与类的私有变量重名
+
+  Vector Vector::operator+(const Vector &b) const
+  {
+  	return Vector(x + b.x, y + b.y); // 这里调用了构造函数，虽然说构造函数定义和原型是没有返回类型的，但是这样写会生成一个临时变量，推荐这样写！！！！！用构造函数来生成新的实例可以减小犯错的概率
+  }
+  // 上面的Vector定义在VECTOR命名空间中
+  Vector folly(3.0, 4,0);    // 在构造函数中原型给了Mode的默认值，RECT
+  Vector foolery(20.0, 30.0, VECTOR::Vector::POL);
+
+  // 重载-，这个符号既可以表示减法，也可以表示取负
+  Vector operator-() const;  // 这里的疑问是对于一元的操作符，默认右边的是第一个参数？？？
+  Vector Vector::operator-() const
+  {
+  	return Vector(-x, -y);
+  }
+
+  // 关于产生随机数
+  #include<cstdlib> // 这个库中包含了srand()和rand()
+  srand(time(0));   // srand产生的随机数种子比rand产生的更随机，time(0)会返回从某一个时间开始的秒数，产生种子只需要做一遍即可。
+  rand();
+
+  // 类的强制转换——从某种类型到类类型的转换
+  // 这一点主要利用了构造函数的隐式调用，构造函数有默认值等
+  Stonewt myCat;
+  myCat = 19.6;  // Stonewt(myCat)
+  // 如何禁止这种隐式调用呢：
+  explicit Stonewt(double lbs); // 这样就禁止了隐式调用
+  // 什么情况会发生隐式调用：
+  1. 将Stornewt对象初始化为double值时
+  2. 将double值赋给Stonewt时
+  3. 将double值传递给接受Stonewt参数的函数时
+  4. 返回值被声明为Stonewt的函数试图返回double时
+
+  // 转换函数——从类类型转换为其他类型：转换函数
+  1. 转换函数必须是类方法
+  2. 转换函数不能指定返回类型
+  3. 转换函数不能有参数
+  operator int();
+  operator double() const;
+
+  Stonewt::operator int() const
+  {
+  	return int (pounds + 0.5);
+  }
+  Stonewt poppins;
+  double p_wt = poppins;  // 隐式调用
+  cout << "Poppins" << int(popins) << "pounds.\n";  // 显式调用，这里必须显式，因为没有要转化为double的暗示
+  explicit operator int();  // 这样就禁止显式调用 
+
+
+```
