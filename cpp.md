@@ -62,26 +62,24 @@
   cout << "Address of var[" << i << "] = ";
   cout << (int *)ptr << endl;
 ```
-
+。  
+。  
 14.C++ 不允许返回一个完整的数组作为函数的参数。但是，您可以通过指定不带索引的数组名来返回一个指向数组的指针
 ```cpp
 //字符串数组的初始化，要注意位数
 char a4[6] = "runoob";          // 报错，没有 null 的位置，一定要记得null，即，'\0'
 ```
-15.setw(int n)产生n-1个空格，setfill(可加其他字符)
-
+15.setw(int n)产生n-1个空格，setfill(可加其他字符)  
 16.数组初始化时可以用聚合方法，但是赋值时候不可以用聚合方法
 ```cpp
   int array[] = {5,10,20,40}; //合法
   int array[]；  array[] = {5,10,20,40}; //非法
 ```
-17.数组在使用时可以是一个含有变量的表达式，但是，在数组声明时必须用常量表达式。定义时，长度必须为一个常量，或者转化为const int
-
+17.数组在使用时可以是一个含有变量的表达式，但是，在数组声明时必须用常量表达式。定义时，长度必须为一个常量，或者转化为const int  
 18.在变量声明的时候，如果没有确切的地址可以赋值，为指针变量赋一个 NULL 值是一个良好的编程习惯。赋为 NULL 值的指针被称为空指针。NULL指针是一个定义在标准库中的值为零的常量。
 ```cpp
   int  *ptr = NULL; //ptr的值是0
-```
-
+```  
 19.int (*ptr)[3];一个指针 ptr 指向一个数组，简称数组指针。
 
 20.引用必须在声明时将其初始化，不能先声明后赋值。int& r = i;
@@ -730,5 +728,131 @@ https://blog.csdn.net/k346k346/article/details/48213811
   3. 可以使用类名和作用域解析运算符来调用
   static int HowMany() {return num_strings};
   int count = String::HowMany();
+
+  // 如果说在类的私有变量中存在一个const int p; 那么如何对其进行初始化。这里讲一种新的初始化方法
+  class Queue
+  {
+  private:
+  	const int qsize;
+
+  public:
+  }
+
+  // 对于下列构造函数
+  Queue::Queue(int qs)
+  {
+  	...
+  	qsize = qs;   // Error!!!因为qsize是常量，可以对他进行初始化，但是不能对他进行复赋值。也就是说调用构造函数时，对象在括号中的代码执行之前被创建，因此必须在执行构造函数体之前，创建对象时进行初始化。
+  }
+
+  // 应该使用成员初始化列表
+  Queue::Queue(int qs) : qsize(qs)
+  {
+  	front = rear = NULL;
+  	items = 0;
+  }
+  // 其他量也可以这样
+  Queue::Queue(int qs) : qsize(qs), front(NULL), rear(NULL), items(0)
+  {
+  }
+  // 对于const类成员，被声明为引用的类成员，必须使用这种语法。！！！！！
+
+```
+
+56.类继承
+```cpp
+  // 公有继承是最常用的基础 public
+  class TableTennisPlayer
+  {
+  private:
+  	string firstname;
+  	string lastname;
+  	bool hasTable;
+
+  public:
+  	TableTennisPlayer(const string &fn = "none", const string &ln = "none", bool ht = false);
+  	void name () const;
+  	bool hasTable() const {return hasTable;};
+  	void ResetTable(bool v) {hasTable = v};
+  };
+
+  class RatedPlayer : public TableTennisPlayer
+  {
+  private:
+  	unsigned int rating;
+
+  public:
+  	RatedPlayer(unsigned int r = 0, const string &fn = "none", const string &ln = "none", bool ht = false);
+  	RatedPlayer(unsigned int r, const TableTennisPlayer &tp);
+  	unsigned int Rating() const {return rating;}
+  	void ResetRating(unsigned int r) {rating = r;}
+  };
+
+  // 派生类存储了基类的数据成员，但只能通过基类的公有方法访问
+  // 派生类可以使用基类的公有方法
+
+  // 关于派生类的构造函数，首先要创建基类对象，派生类构造函数应通过成员初始化列表将基类信息传递给基类构造函数，派生类构造函数应初始化派生类新增的数据成员
+  RatedPlayer::RatedPlayer(unsigned int r, const string &fn, const string &ln, bool ht) : TableTennisPlayer(fn, ln, ht)
+  {
+  	rating = r;
+  }
+  RatedPlayer rplayer1(1140, "Mallory", "Duck", true);
+  // 如果说没有用成员初始化列表，那么对调用默认的TableTennisPlayer构造函数
+
+  // 派生类可以使用基类的方法，只能通过基类的方法访问继承自基类的数据成员，基类的指针和引用均可以不加显式类型转换指向或引用派生类函数，但是均只能调用基类方法。
+  // 不可以将基类对象和地址赋给派生类引用和指针
+  TableTennisPlayer player("BB", "Bloop", true);
+  RatedPlayer &rr = player;     // ERROR!!!!
+  RatedPlayer *pr = player;     // ERROR！！！！！
+  // 但是可以把派生类赋给基类，这样就有很多骚操作
+  RatedPlayer olaf1(1840, "Olaf", "Loaf", true);
+  TableTennisPlayer winner;
+  winner = olaf1;  // 隐式调用=重载，TableTennisPlayer & operator=(const TableTennisPlayer &) const;
+
+  // 公有继承 is-a关系
+  // 清楚缓冲区的方法，这会经常用到的
+  while(cin.get() != '\n')
+  	continue;
+
+  // 关于函数多态：如果派生类中存在和基类的方法相同，且原型也一样，多态的继承，要用虚函数成员
+  // 通常的做法是将基类中对应的方法原型中为虚类，前面加关键词virtual
+  // 虚函数的好处在于，如果说我有一个基类的指针，那么该指针可能指向基类对象或者派生类对象，若不是虚函数，则直接根据指针的类型调用函数了，但是如果是虚函数，那么会根据指针指向的对象的类型来选择多态的函数。其实只要在基类中原型前加上virtual，在派生类中对应的函数就会自动变成virtual，但有时候在派生类中指出来也不错
+
+  // 另外，在派生类中定义多态函数内部如果需要用到同名的基类方法，必须加上作用域解析符(很显然，不然就自己递归了)。
+  // 此外，指针是可以用new后面跟上构造函数这样来分配一块内存的
+  BrassPlus *p;
+  p = new BrassPlus(ten...);
+
+  // 联编的动态和静态 ，以及虚函数的工作原理见 P503 ，向上强制转换是可传递的
+  // 对于一个按置传递的函数，如果其定义中接受的是Brass对象，而我们的输入是BraaPlus对象，那么会把BrassPlus中的Brass部分赋给形参。
+  // 虚函数的注意点
+  1. 构造函数不要声明为虚，因为没什么意义
+  2. 析构函数应该为虚，通常应该给基类提供一个虚析构函数，即使他并不需要析构函数
+  3. 友元函数不能是虚函数，因为友元函数不是类成员，只有类成员才能是虚函数
+  4. 重新定义将会隐藏方法：
+  class Dwelling
+  {
+  public:
+  	virtual void showperks(int a) const;
+  };
+  class Hovel : public Dwelling
+  {
+  public:
+  	virtual void showperks() const;
+  };
+
+  Hovel trump;
+  trump.showperks();   // valid
+  trump.showperks(5);  // invalid
+  // 为什么会这样呢。因为新定义了showperks()为一个不接受任何参数的函数。重新定义不会生成函数的两个重载版本，而是会隐藏接受一个int参数的基类版本。注意！重新定义继承的方法并不是重载！！！！
+  // 返回类型协变，原先返回类型是指向基类的指针或者引用允许改为派生类的，只适用于返回值。
+  5. 如果原先基类中方法是重载的，那么派生类中也需要定义所有的重载函数，不然未被定义的会被隐藏。
+
+  // ABC Abstract Base Class 抽象基类
+  // 纯虚函数，包含纯虚函数类成员的类无法生成对象
+  // 包含纯虚函数的类只能用作基类
+  vritual double Area() const = 0;  // a pure virtual function
+
+
 
 ```
